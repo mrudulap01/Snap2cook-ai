@@ -1,163 +1,192 @@
-# Snap2Cook AI 🍳📸
-
-![Snap2Cook Header](https://raw.githubusercontent.com/example/snap2cook/main/assets/header.png)
-
-**Snap2Cook AI** is an intelligent, multi-agent cooking assistant that reverse-engineers a full recipe from a single photo of a cooked dish, and then dynamically adapts that recipe based on what you currently have in your pantry!
-
-Built on the **Google Agent Development Kit (ADK)** architecture, this application executes advanced vision analysis, nutritional estimation, and intelligent culinary reasoning using structured, deterministic agent orchestration.
-
----
-
-## 🌟 Key Features
-
-1. **Upload Dish (Vision Analysis)**
-   - Upload a photo of any cooked meal.
-   - The AI identifies the dish, cuisine, visible ingredients, and cooking techniques.
-   - It instantly reconstructs a cookbook-quality recipe with granular preparation steps, cook times, and chef's tips.
-   - Generates a detailed nutritional breakdown (macros per serving and for the entire dish).
-   
-2. **My Pantry (Recipe Adaptation)**
-   - Once a recipe is generated, upload a photo of your fridge or pantry.
-   - The AI scans your available ingredients.
-   - It calculates a **Compatibility Score** between your recipe and your pantry.
-   - It completely rewrites the recipe, making intelligent substitutions (e.g., swapping heavy cream for cashew milk) and generates a missing items shopping list.
-
-3. **PDF Export**
-   - Instantly download your generated or adapted recipes as neatly formatted PDF files for easy printing or sharing.
+<div align="center">
+  <!-- Banner Placeholder -->
+  <img src="https://via.placeholder.com/1200x300.png?text=Snap2Cook+AI+Banner" alt="Snap2Cook AI Banner">
+  
+  <!-- Logo Placeholder -->
+  <img src="https://via.placeholder.com/150x150.png?text=Logo" alt="Snap2Cook Logo" width="150" height="150">
+  
+  # Snap2Cook AI 🍳📸
+  
+  **Snap Any Dish. Cook It With What You Already Have.**
+  
+  <p align="center">
+    <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.9+-blue.svg?logo=python&logoColor=white" alt="Python"></a>
+    <a href="https://developers.google.com/workspace/agents"><img src="https://img.shields.io/badge/Google-ADK-orange.svg?logo=google&logoColor=white" alt="Google ADK"></a>
+    <a href="https://deepmind.google/technologies/gemini/"><img src="https://img.shields.io/badge/AI-Gemini_2.5_Flash-00A9E0.svg?logo=googlebard&logoColor=white" alt="Gemini"></a>
+    <a href="https://streamlit.io/"><img src="https://img.shields.io/badge/Streamlit-UI-FF4B4B.svg?logo=streamlit&logoColor=white" alt="Streamlit"></a>
+    <a href="https://modelcontextprotocol.io/"><img src="https://img.shields.io/badge/Architecture-MCP-4CAF50.svg" alt="MCP"></a>
+    <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/Open%20Source-%E2%9D%A4-green.svg" alt="Open Source"></a>
+  </p>
+</div>
 
 ---
 
-## 🏗️ Architecture Design
+## 📖 Project Overview
+Snap2Cook AI is an intelligent, multi-agent culinary assistant designed to bridge the gap between food discovery and home cooking. By leveraging state-of-the-art vision models and the **Google Agent Development Kit (ADK)**, Snap2Cook reverse-engineers a complete, cookbook-quality recipe from a single photo of a cooked dish. It then intelligently adapts that recipe based on a visual scan of your pantry, ensuring you can cook delicious meals without unnecessary grocery runs.
 
-Snap2Cook employs a sophisticated, multi-agent pipeline orchestrated by a centralized state manager, heavily inspired by the Google ADK patterns:
+## ❗ Problem Statement
+Food discovery often happens visually—through social media, menus, or cookbooks. However, translating a photo into a cookable recipe is difficult. Even when a recipe is found, home cooks frequently face the "missing ingredient" dilemma, leading to abandoned cooking plans or last-minute shopping trips.
 
-```mermaid
-graph TD
-    User([User]) -->|Uploads Dish Image| App[Streamlit Frontend]
-    App -->|Invokes| Orchestrator[Snap2Cook Orchestrator]
-    
-    Orchestrator -->|Handoff: Image| VisionAgent[Vision Analysis Agent]
-    VisionAgent -->|Returns: Structured Dish Data| Orchestrator
-    
-    Orchestrator -->|Handoff: Dish Data| RecipeAgent[Recipe Reconstruction Agent]
-    RecipeAgent -->|Utilizes| MCPServer[[MCP Nutrition & Tools Server]]
-    RecipeAgent -->|Returns: Full Recipe| Orchestrator
-    
-    Orchestrator -->|Updates UI| App
-    
-    User -->|Uploads Pantry Image| App
-    App -->|Invokes| Orchestrator
-    
-    Orchestrator -->|Handoff: Pantry Image| PantryAgent[Pantry Inventory Agent]
-    PantryAgent -->|Returns: Available Items| Orchestrator
-    
-    Orchestrator -->|Handoff: Recipe + Inventory| AdaptationAgent[Recipe Adaptation Agent]
-    AdaptationAgent -->|Utilizes| MCPServer
-    AdaptationAgent -->|Returns: Adapted Recipe| Orchestrator
-    
-    Orchestrator -->|Updates UI| App
+## 💡 Solution
+Snap2Cook AI eliminates culinary friction by providing an end-to-end, vision-driven cooking pipeline:
+1. **Discover:** Snap a photo of a dish to generate an authentic recipe.
+2. **Adapt:** Snap a photo of your fridge/pantry to dynamically rewrite the recipe using only what you have on hand.
+
+---
+
+## ✨ Features
+- **👁️ AI Dish Recognition**: Accurately detects cuisine, distinct textures, and hidden ingredients from a single image.
+- **👨‍🍳 Recipe Reconstruction**: Generates granular, step-by-step cooking instructions complete with estimated times and expected outcomes.
+- **🥫 Pantry Analysis**: Identifies available ingredients from chaotic fridge or pantry photos.
+- **🔀 Smart Ingredient Substitution**: Dynamically rewrites recipes, swapping out missing items with culinary-appropriate alternatives from your inventory.
+- **📊 Deterministic Nutrition Analysis**: Calculates macros per serving using a strict, algorithmic Model Context Protocol (MCP) server integration.
+
+---
+
+## 🛠️ Tech Stack
+- **Language**: Python 3.9+
+- **Agent Framework**: Google Agent Development Kit (ADK) Architectures
+- **Intelligence**: OpenRouter / Google Gemini 2.5 Flash / Meta Llama 3.1
+- **UI/UX**: Streamlit
+- **Validation**: Pydantic Strict Typing
+- **Resiliency**: Tenacity (Exponential Backoff Retries)
+
+---
+
+## 🏗️ Architecture
+
+### 1. Google ADK Workflow
+Snap2Cook avoids the unreliability of autonomous "agent swarms" by implementing a strict, centralized orchestration pattern inspired by the **Google ADK**.
+- **ADKRunner**: A centralized state machine that routes data sequentially.
+- **ADKSession**: Provides immutable telemetry and logs every agent interaction.
+- **Event Callbacks**: Hooks into Streamlit to provide real-time UI updates (`on_agent_start`, `on_agent_end`).
+- **Chain of Thought (CoT)**: Enforced via Pydantic; agents must "think out loud" before finalizing their JSON outputs.
+
+<!-- Architecture Diagram Placeholder -->
+<div align="center">
+  <img src="https://via.placeholder.com/800x400.png?text=System+Architecture+Diagram" alt="Architecture Diagram">
+</div>
+
+### 2. Model Context Protocol (MCP) Workflow
+To ensure accuracy, the application decouples non-linguistic tasks from the LLM. Using a simulated **MCP Server**, the AI requests rigid, deterministic calculations:
+- `get_nutrition()`: Algorithmic macronutrient calculation based on ingredient categories.
+- `scale_recipe()`: Strict mathematical unit conversions and yield scaling.
+
+---
+
+## 📁 Folder Structure
+
+```text
+📦 snap2cook-ai
+ ┣ 📂 agents/                # Core AI Agents (Vision, Pantry, Recipe, Adaptation)
+ ┃ ┣ 📜 base_agent.py        # Abstract agent class
+ ┃ ┣ 📜 callbacks.py         # ADK Event listeners for UI telemetry
+ ┃ ┣ 📜 orchestrator.py      # Central state manager (ADK Runner)
+ ┃ ┣ 📜 prompts.py           # Chain-of-Thought injected prompts
+ ┃ ┗ 📜 sessions.py          # ADK Session logging
+ ┣ 📂 config/                # Environment and app settings
+ ┣ 📂 frontend/              # Streamlit User Interface
+ ┃ ┣ 📜 app.py               # Home Landing Page
+ ┃ ┗ 📂 pages/               # Upload Dish & My Pantry interfaces
+ ┣ 📂 mcp_server/            # Simulated Model Context Protocol Server
+ ┃ ┣ 📜 server.py            # MCP tool registry
+ ┃ ┗ 📂 tools/               # Deterministic nutrition and conversion tools
+ ┣ 📂 schemas/               # Strict Pydantic Data Models
+ ┣ 📂 tests/                 # Pytest verification suites
+ ┣ 📂 utils/                 # Resiliency wrappers and exporters
+ ┣ 📜 requirements.txt       # Project dependencies
+ ┗ 📜 README.md              # Project documentation
 ```
 
-### Core ADK Concepts Utilized
-- **Centralized Orchestration**: The `ADKRunner` manages all agent invocations, avoiding messy inter-agent calls.
-- **Event Callbacks**: Lifecycle hooks (`on_agent_start`, `on_agent_end`) update the frontend UI progressively.
-- **Strict Data Schemas**: Every agent inputs and outputs strict Pydantic schemas (e.g., `DishAnalysis`, `Recipe`).
-- **Chain of Thought**: Prompts force agents to output their reasoning prior to finalizing JSON fields, improving deterministic behavior.
-- **Tool Servers (MCP)**: Algorithmic calculations (nutrition, scaling, conversions) are decoupled into a simulated Model Context Protocol server rather than relying on LLM hallucinations.
+---
+
+## 📸 Screenshots
+
+<div align="center">
+  <!-- Screenshot 1 Placeholder -->
+  <img src="https://via.placeholder.com/800x450.png?text=Home+Page+Showcase" alt="Home Page">
+  <br><br>
+  <!-- Screenshot 2 Placeholder -->
+  <img src="https://via.placeholder.com/800x450.png?text=Upload+Dish+Workflow" alt="Upload Dish">
+  <br><br>
+  <!-- Screenshot 3 Placeholder -->
+  <img src="https://via.placeholder.com/800x450.png?text=Smart+Pantry+Adaptation" alt="My Pantry">
+</div>
 
 ---
 
-## 🚀 How to Use the App
+## ⚙️ Installation & Running Locally
 
-### Step 1: Discover a Recipe
-1. Navigate to the **Upload Dish** page.
-2. Click "Browse files" and upload a clear photo of a dish you want to cook (`.jpg` or `.png`).
-3. Click **Analyze Dish & Generate Recipe**.
-4. Review the generated ingredients, instructions, and nutrition facts. You can download it as a PDF!
+### 1. Prerequisites
+- **Python 3.9+**
+- Git installed on your system
 
-### Step 2: Adapt to Your Pantry
-1. With your recipe generated, navigate to the **My Pantry** page on the sidebar.
-2. Upload a photo of your fridge, pantry shelves, or a countertop with ingredients.
-3. Click **Analyze Pantry & Adapt Recipe**.
-4. The AI will provide a new, adapted recipe using only what you have (or suggesting the closest substitutes), alongside a shopping list for what you're completely missing.
-
----
-
-## 🛠️ Local Installation & Setup
-
-### Prerequisites
-- Python 3.9 or higher
-- Git
-
-### 1. Clone the Repository
+### 2. Clone the Repository
 ```bash
 git clone https://github.com/mrudulap01/Snap2cook-ai.git
 cd Snap2cook-ai
 ```
 
-### 2. Install Dependencies
+### 3. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Set Up Environment Variables
-Create a file named `.env` in the root of the project directory. Add your AI API key and model preferences:
+### 4. Environment Variables
+Create a `.env` file in the root directory. The application is completely provider-independent.
+
 ```env
-AI_API_KEY=your_api_key_here
+# Primary API Key
+AI_API_KEY=your_openrouter_or_gemini_key_here
+
+# Base URL (Default: OpenRouter)
 AI_BASE_URL=https://openrouter.ai/api/v1
+
+# Model Selection
 VISION_MODEL=google/gemini-2.5-flash
 TEXT_MODEL=google/gemini-2.5-flash
+FALLBACK_TEXT_MODEL=meta-llama/llama-3.1-70b-instruct
 ```
 
-### 4. Run the Application
-Start the Streamlit development server:
+### 5. Start the Application
 ```bash
 python -m streamlit run frontend/app.py
 ```
-The app will automatically open in your web browser at `http://localhost:8501`.
+The app will launch in your browser at `http://localhost:8501`.
 
 ---
 
-## 🤖 Model Configuration (Provider Independence)
-
-Snap2Cook is completely provider-independent. You can switch to DeepSeek, Qwen, Llama, Groq, or native OpenAI simply by editing your `.env` file! No code changes are required.
-
-**Example 1: Using DeepSeek and Qwen via OpenRouter (Default)**
-```env
-AI_BASE_URL=https://openrouter.ai/api/v1
-VISION_MODEL=qwen/qwen-2-vl-72b-instruct
-TEXT_MODEL=deepseek/deepseek-chat
-```
-
-**Example 2: Using Native Google AI Studio**
-```env
-AI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
-VISION_MODEL=gemini-2.5-flash
-TEXT_MODEL=gemini-2.5-flash
-```
-
-**Example 3: Using Local Models via Ollama**
-```env
-AI_BASE_URL=http://localhost:11434/v1
-VISION_MODEL=llava
-TEXT_MODEL=llama3
-```
-
----
-
-## ☁️ Deployment Guide (Streamlit Community Cloud)
-
-Snap2Cook is completely deployment-ready for Streamlit Community Cloud.
-
-1. Create an account at [share.streamlit.io](https://share.streamlit.io/).
-2. Click **New app** and connect your GitHub account.
-3. Select the `mrudulap01/Snap2cook-ai` repository and the `main` branch.
-4. Set the **Main file path** to: `frontend/app.py`.
-5. Click **Advanced settings...** and add your Secrets:
+## ☁️ Deployment (Streamlit Community Cloud)
+Snap2Cook is production-ready for immediate deployment.
+1. Sign in to [Streamlit Community Cloud](https://share.streamlit.io/).
+2. Create a **New App** and select your GitHub repository.
+3. Set the **Main file path** to `frontend/app.py`.
+4. In **Advanced Settings**, add your environment variables as Streamlit Secrets:
    ```toml
-   AI_API_KEY = "your_api_key_here"
-   AI_BASE_URL = "https://openrouter.ai/api/v1"
+   AI_API_KEY = "..."
    VISION_MODEL = "google/gemini-2.5-flash"
    TEXT_MODEL = "google/gemini-2.5-flash"
    ```
-6. Click **Deploy!**
+5. Click **Deploy!**
+
+---
+
+## 🚀 Future Scope
+- **Multi-Modal Output**: Generate AI audio guides that read the recipe steps aloud while cooking.
+- **Grocery Integration**: 1-click integration with Instacart or Amazon Fresh for the missing items shopping list.
+- **Dietary Restrictions**: Strict toggle modes for Vegan, Keto, or Gluten-Free adaptations.
+
+---
+
+## 🤝 Contributing
+Contributions are always welcome! 
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+Distributed under the MIT License. See `LICENSE` for more information.
