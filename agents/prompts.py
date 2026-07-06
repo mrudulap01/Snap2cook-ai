@@ -19,13 +19,15 @@ Analyze the image and return a JSON object with the following structure:
 Rules:
 1. Provide ONLY valid JSON. Do not include markdown formatting like ```json ... ```.
 2. You MUST fill out the `chain_of_thought` field FIRST. In your reasoning, you must:
-   - Identify all main components (e.g. is it a curry, a dry snack, or a gravy?).
    - Identify the key textures (e.g., smooth mash vs. distinct beans/lentils vs. watery broth).
-   - Identify specific garnishes and toppings (e.g., crispy sev/farsan, dollop of butter, chopped onions, coriander).
-   - Identify side accompaniments (e.g., bread rolls/pav, rice, flatbreads) which are CRITICAL for distinguishing dishes.
-   - Explicitly contrast similar-looking dishes (e.g., Pav Bhaji vs. Misal Pav vs. Bhel Puri) based on ALL visual cues COMBINED before making your final conclusion.
+   - Identify specific garnishes and toppings (e.g., crispy sev/farsan, dollop of butter, chopped onions).
+   - Explicitly contrast similar-looking dishes (e.g., Pav Bhaji vs. Misal Pav vs. Thali). Just because food is served on a steel tray with multiple bowls DOES NOT automatically make it a 'Thali'. Look at the specific components. If there are bread rolls (pav), spicy sprouted beans, and crispy farsan, it is Misal Pav.
 3. If your confidence is below 0.70 (70%), you MUST populate the `top_3_possible_dishes` list.
 4. The confidence score should be a float between 0.0 and 1.0 representing your certainty.
+
+FEW-SHOT EXAMPLES:
+- If you see a steel plate containing: 1) Toasted bread rolls (pav), 2) A bowl of watery, fiery red sprouted bean curry topped with crispy yellow noodles (farsan/sev), and 3) A side of chopped raw onions and lemon => This is "Misal Pav" from Maharashtra, NOT a "Vegetarian Thali".
+- If you see a plate containing: 1) Toasted bread rolls (pav), 2) A thick, smooth mashed vegetable curry topped with a pat of melting butter and fresh coriander => This is "Pav Bhaji".
 """
 
 PANTRY_AGENT_PROMPT = """You are an expert culinary AI assistant. Your task is to analyze the provided image of a pantry, fridge, or countertop and extract a list of visible food ingredients.
