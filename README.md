@@ -63,12 +63,13 @@ pip install -r requirements.txt
 ```
 
 ### 3. Set Up Environment Variables
-Create a file named `.env` in the root of the project directory. Add your OpenRouter API key:
+Create a file named `.env` in the root of the project directory. Add your AI API key and model preferences:
 ```env
-OPENROUTER_API_KEY=your_openrouter_api_key_here
-LOG_LEVEL=INFO
+AI_API_KEY=your_api_key_here
+VISION_MODEL=google/gemini-2.5-flash
+TEXT_MODEL=google/gemini-2.5-flash
 ```
-*(You can obtain an API key by signing up at [OpenRouter.ai](https://openrouter.ai/))*
+*(You can obtain an API key by signing up at [OpenRouter.ai](https://openrouter.ai/) or your preferred provider)*
 
 ### 4. Run the Application
 Start the Streamlit development server:
@@ -76,6 +77,33 @@ Start the Streamlit development server:
 python -m streamlit run frontend/app.py
 ```
 The app will automatically open in your web browser at `http://localhost:8501`.
+
+---
+
+## 🤖 Model Configuration (Provider Independence)
+
+Snap2Cook is completely provider-independent. You can switch to DeepSeek, Qwen, Llama, Groq, or native OpenAI simply by editing your `.env` file! No code changes are required.
+
+**Example 1: Using DeepSeek and Qwen via OpenRouter (Default)**
+```env
+AI_BASE_URL=https://openrouter.ai/api/v1
+VISION_MODEL=qwen/qwen-2-vl-72b-instruct
+TEXT_MODEL=deepseek/deepseek-chat
+```
+
+**Example 2: Using Native Google AI Studio**
+```env
+AI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
+VISION_MODEL=gemini-2.5-flash
+TEXT_MODEL=gemini-2.5-flash
+```
+
+**Example 3: Using Local Models via Ollama**
+```env
+AI_BASE_URL=http://localhost:11434/v1
+VISION_MODEL=llava
+TEXT_MODEL=llama3
+```
 
 ---
 
@@ -89,7 +117,9 @@ Snap2Cook is completely deployment-ready for Streamlit Community Cloud.
 4. Set the **Main file path** to: `frontend/app.py`.
 5. Click **Advanced settings...** and add your Secrets:
    ```toml
-   OPENROUTER_API_KEY = "your_openrouter_api_key_here"
+   AI_API_KEY = "your_api_key_here"
+   VISION_MODEL = "google/gemini-2.5-flash"
+   TEXT_MODEL = "google/gemini-2.5-flash"
    ```
 6. Click **Deploy!**
 
