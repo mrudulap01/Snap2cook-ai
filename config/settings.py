@@ -4,9 +4,21 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 class Settings:
-    # Use GEMINI_API_KEY as a fallback if OPENROUTER_API_KEY is not set, 
-    # since the user previously set GEMINI_API_KEY in their .env
-    OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY") or os.getenv("GEMINI_API_KEY", "")
-    LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
+    @property
+    def OPENROUTER_API_KEY(self) -> str:
+        # Check Streamlit Secrets first (for Cloud Deployment)
+        try:
+            import streamlit as st
+            if "OPENROUTER_API_KEY" in st.secrets:
+                return st.secrets["OPENROUTER_API_KEY"]
+        except Exception:
+            pass
+            
+        # Fallback to local .env
+        return os.getenv("OPENROUTER_API_KEY") or os.getenv("GEMINI_API_KEY", "")
+
+    @property
+    def LOG_LEVEL(self) -> str:
+        return os.getenv("LOG_LEVEL", "INFO")
 
 settings = Settings()
