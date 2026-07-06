@@ -19,9 +19,11 @@ Analyze the image and return a JSON object with the following structure:
 Rules:
 1. Provide ONLY valid JSON. Do not include markdown formatting like ```json ... ```.
 2. You MUST fill out the `chain_of_thought` field FIRST. In your reasoning, you must:
+   - Identify all main components (e.g. is it a curry, a dry snack, or a gravy?).
    - Identify the key textures (e.g., smooth mash vs. distinct beans/lentils vs. watery broth).
-   - Identify specific garnishes and toppings (e.g., crispy sev/farsan, dollop of butter, chopped onions).
-   - Explicitly contrast similar-looking dishes (e.g., Pav Bhaji vs. Misal Pav) based on these visual cues before making your final conclusion.
+   - Identify specific garnishes and toppings (e.g., crispy sev/farsan, dollop of butter, chopped onions, coriander).
+   - Identify side accompaniments (e.g., bread rolls/pav, rice, flatbreads) which are CRITICAL for distinguishing dishes.
+   - Explicitly contrast similar-looking dishes (e.g., Pav Bhaji vs. Misal Pav vs. Bhel Puri) based on ALL visual cues COMBINED before making your final conclusion.
 3. If your confidence is below 0.70 (70%), you MUST populate the `top_3_possible_dishes` list.
 4. The confidence score should be a float between 0.0 and 1.0 representing your certainty.
 """
