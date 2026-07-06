@@ -39,18 +39,44 @@ class NutritionData(BaseModel):
 
 @mcp.tool()
 def get_nutrition(ingredient: str, quantity: float, unit: str) -> NutritionData:
-    """Simulates a USDA nutrition database lookup for a specific ingredient."""
-    # Simplified simulation logic
-    base_cal = random.randint(20, 200)
-    multiplier = quantity if unit in ["g", "ml", "cup", "tbsp"] else 1.0
+    """Simulates a USDA nutrition database lookup with deterministic macronutrient algorithms."""
+    # Convert unit to approximate grams for calculation
+    unit = unit.lower().strip()
+    grams = quantity
+    if unit in ["cup", "cups"]: grams = quantity * 240
+    elif unit in ["tbsp", "tablespoon", "tablespoons"]: grams = quantity * 15
+    elif unit in ["tsp", "teaspoon", "teaspoons"]: grams = quantity * 5
+    elif unit in ["oz", "ounce", "ounces"]: grams = quantity * 28.35
+    elif unit in ["ml", "milliliter"]: grams = quantity # rough water density
+    elif unit in ["lb", "pound", "pounds"]: grams = quantity * 453.59
     
+    name = ingredient.lower()
+    
+    # Categorize ingredient for macros
+    if any(w in name for w in ["oil", "butter", "ghee", "fat", "lard"]):
+        cal_per_g, p, f, c = 8.5, 0.0, 1.0, 0.0
+    elif any(w in name for w in ["sugar", "honey", "syrup", "maple"]):
+        cal_per_g, p, f, c = 3.8, 0.0, 0.0, 1.0
+    elif any(w in name for w in ["chicken", "beef", "pork", "fish", "meat", "lamb"]):
+        cal_per_g, p, f, c = 2.5, 0.6, 0.4, 0.0
+    elif any(w in name for w in ["flour", "rice", "pasta", "bread", "oat", "wheat"]):
+        cal_per_g, p, f, c = 3.6, 0.1, 0.05, 0.85
+    elif any(w in name for w in ["cheese", "milk", "cream", "yogurt"]):
+        cal_per_g, p, f, c = 3.0, 0.25, 0.6, 0.15
+    elif any(w in name for w in ["nut", "almond", "peanut", "cashew", "walnut"]):
+        cal_per_g, p, f, c = 6.0, 0.2, 0.6, 0.2
+    else:
+        # Default vegetable/fruit/other
+        cal_per_g, p, f, c = 0.5, 0.1, 0.0, 0.9
+
+    total_cal = grams * cal_per_g
     return NutritionData(
-        calories=int(base_cal * multiplier),
-        protein=int((base_cal * 0.1) * multiplier),
-        fat=int((base_cal * 0.05) * multiplier),
-        carbs=int((base_cal * 0.2) * multiplier),
-        fiber=int((base_cal * 0.02) * multiplier),
-        sugar=int((base_cal * 0.03) * multiplier)
+        calories=int(total_cal),
+        protein=int((total_cal * p) / 4),
+        fat=int((total_cal * f) / 9),
+        carbs=int((total_cal * c) / 4),
+        fiber=int((total_cal * c) / 20),
+        sugar=int((total_cal * c) / 8)
     )
 
 # --- Tool 3: Unit Conversion ---

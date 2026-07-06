@@ -4,7 +4,7 @@
 
 **Snap2Cook AI** is an intelligent, multi-agent cooking assistant that reverse-engineers a full recipe from a single photo of a cooked dish, and then dynamically adapts that recipe based on what you currently have in your pantry!
 
-Built on the Google Agent Development Kit (ADK) architecture, this application utilizes **OpenRouter** and `google/gemini-2.5-flash` to execute advanced vision analysis, nutritional estimation, and intelligent culinary reasoning.
+Built on the **Google Agent Development Kit (ADK)** architecture, this application executes advanced vision analysis, nutritional estimation, and intelligent culinary reasoning using structured, deterministic agent orchestration.
 
 ---
 
@@ -27,6 +27,46 @@ Built on the Google Agent Development Kit (ADK) architecture, this application u
 
 ---
 
+## 🏗️ Architecture Design
+
+Snap2Cook employs a sophisticated, multi-agent pipeline orchestrated by a centralized state manager, heavily inspired by the Google ADK patterns:
+
+```mermaid
+graph TD
+    User([User]) -->|Uploads Dish Image| App[Streamlit Frontend]
+    App -->|Invokes| Orchestrator[Snap2Cook Orchestrator]
+    
+    Orchestrator -->|Handoff: Image| VisionAgent[Vision Analysis Agent]
+    VisionAgent -->|Returns: Structured Dish Data| Orchestrator
+    
+    Orchestrator -->|Handoff: Dish Data| RecipeAgent[Recipe Reconstruction Agent]
+    RecipeAgent -->|Utilizes| MCPServer[[MCP Nutrition & Tools Server]]
+    RecipeAgent -->|Returns: Full Recipe| Orchestrator
+    
+    Orchestrator -->|Updates UI| App
+    
+    User -->|Uploads Pantry Image| App
+    App -->|Invokes| Orchestrator
+    
+    Orchestrator -->|Handoff: Pantry Image| PantryAgent[Pantry Inventory Agent]
+    PantryAgent -->|Returns: Available Items| Orchestrator
+    
+    Orchestrator -->|Handoff: Recipe + Inventory| AdaptationAgent[Recipe Adaptation Agent]
+    AdaptationAgent -->|Utilizes| MCPServer
+    AdaptationAgent -->|Returns: Adapted Recipe| Orchestrator
+    
+    Orchestrator -->|Updates UI| App
+```
+
+### Core ADK Concepts Utilized
+- **Centralized Orchestration**: The `ADKRunner` manages all agent invocations, avoiding messy inter-agent calls.
+- **Event Callbacks**: Lifecycle hooks (`on_agent_start`, `on_agent_end`) update the frontend UI progressively.
+- **Strict Data Schemas**: Every agent inputs and outputs strict Pydantic schemas (e.g., `DishAnalysis`, `Recipe`).
+- **Chain of Thought**: Prompts force agents to output their reasoning prior to finalizing JSON fields, improving deterministic behavior.
+- **Tool Servers (MCP)**: Algorithmic calculations (nutrition, scaling, conversions) are decoupled into a simulated Model Context Protocol server rather than relying on LLM hallucinations.
+
+---
+
 ## 🚀 How to Use the App
 
 ### Step 1: Discover a Recipe
@@ -44,8 +84,6 @@ Built on the Google Agent Development Kit (ADK) architecture, this application u
 ---
 
 ## 🛠️ Local Installation & Setup
-
-If you want to run Snap2Cook AI on your own machine, follow these steps:
 
 ### Prerequisites
 - Python 3.9 or higher
@@ -66,10 +104,10 @@ pip install -r requirements.txt
 Create a file named `.env` in the root of the project directory. Add your AI API key and model preferences:
 ```env
 AI_API_KEY=your_api_key_here
+AI_BASE_URL=https://openrouter.ai/api/v1
 VISION_MODEL=google/gemini-2.5-flash
 TEXT_MODEL=google/gemini-2.5-flash
 ```
-*(You can obtain an API key by signing up at [OpenRouter.ai](https://openrouter.ai/) or your preferred provider)*
 
 ### 4. Run the Application
 Start the Streamlit development server:
@@ -118,20 +156,8 @@ Snap2Cook is completely deployment-ready for Streamlit Community Cloud.
 5. Click **Advanced settings...** and add your Secrets:
    ```toml
    AI_API_KEY = "your_api_key_here"
+   AI_BASE_URL = "https://openrouter.ai/api/v1"
    VISION_MODEL = "google/gemini-2.5-flash"
    TEXT_MODEL = "google/gemini-2.5-flash"
    ```
 6. Click **Deploy!**
-
----
-
-## 🏗️ Architecture
-
-Snap2Cook employs a sophisticated multi-agent pipeline:
-
-1. **Vision Analysis Agent**: Extracts entities and ingredients from images.
-2. **Recipe Reconstruction Agent**: Formats culinary data into structured JSON models.
-3. **Pantry Inventory Agent**: Detects available items from noisy environment images.
-4. **Recipe Adaptation Agent**: Merges the original recipe with the available inventory to generate a new culinary path.
-
-All communication is facilitated by a central **ADK Runner** that manages state and logging.

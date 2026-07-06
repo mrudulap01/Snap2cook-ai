@@ -19,6 +19,7 @@ Rules:
 1. Provide ONLY valid JSON. Do not include markdown formatting like ```json ... ```.
 2. If your confidence is below 0.70 (70%), you MUST populate the `top_3_possible_dishes` list.
 3. The confidence score should be a float between 0.0 and 1.0 representing your certainty.
+4. You MUST fill out the `chain_of_thought` field FIRST to document your reasoning before answering the other fields.
 """
 
 PANTRY_AGENT_PROMPT = """You are an expert culinary AI assistant. Your task is to analyze the provided image of a pantry, fridge, or countertop and extract a list of visible food ingredients.
@@ -98,10 +99,21 @@ You must return ONLY a JSON object matching exactly this structure:
 }
 
 Rules:
-1. Provide ONLY valid JSON.
+1. Provide ONLY valid JSON. Do not include markdown formatting.
 2. Generate a highly detailed, cookbook-quality recipe. DO NOT SUMMARIZE. Provide at least 8-15 steps if appropriate.
 3. Every step must explain what to do, when to do it, approximate duration, and the expected outcome.
 4. Calculate highly accurate and realistic nutrition values utilizing any available MCP Nutrition tools if possible, otherwise rely on rigorous internal estimation.
+5. You MUST fill out the `chain_of_thought` field FIRST to document your reasoning before answering the other fields.
+
+Example Good Output:
+{
+  "chain_of_thought": "The dish is a classic Spaghetti Bolognese. I will start by sweating the mirepoix... The nutrition for beef and pasta will be roughly 600 calories.",
+  "dish_name": "Authentic Spaghetti Bolognese",
+  "cuisine": "Italian",
+  "description": "A rich, slow-simmered meat sauce tossed with al dente spaghetti.",
+  "servings": 4,
+  ...
+}
 """
 
 ADAPTATION_AGENT_PROMPT = """You are an expert Executive Chef. You have been provided with an original recipe and a list of ingredients available in a user's pantry.
@@ -186,7 +198,8 @@ You must return ONLY a JSON object matching exactly this structure:
 }
 
 Rules:
-1. Provide ONLY valid JSON.
+1. Provide ONLY valid JSON. Do not include markdown formatting.
 2. The `compatibility_score` must be an integer between 0 and 100.
 3. The `adapted_recipe` MUST be fully rewritten. Do NOT simply replace ingredient names. Adjust cooking times, instructions, nutrition values, and difficulty strictly reflecting the substitutions.
+4. You MUST fill out the `chain_of_thought` field FIRST to document your step-by-step substitution reasoning.
 """

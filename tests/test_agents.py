@@ -8,6 +8,7 @@ from schemas.models import DishAnalysis, Recipe, Nutrition, NutritionBreakdown
 async def test_orchestrator_full_workflow(mock_execute):
     # Mock Vision Output
     mock_vision = DishAnalysis(
+        chain_of_thought="Looks like pasta.",
         dish_name="Test Dish",
         alternate_names=[],
         cuisine="Italian",
@@ -23,6 +24,7 @@ async def test_orchestrator_full_workflow(mock_execute):
     
     # Mock Recipe Output
     mock_recipe = Recipe(
+        chain_of_thought="I will reconstruct the pasta.",
         dish_name="Test Dish",
         cuisine="Italian",
         description="Test",

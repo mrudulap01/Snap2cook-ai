@@ -34,12 +34,25 @@ else:
                 
                 orchestrator = Snap2CookOrchestrator()
                 
+                # UX: ADK Event Callbacks
+                def ui_start_callback(agent_name, payload):
+                    st.toast(f"🤖 {agent_name} has started processing...", icon="⚙️")
+                    
+                def ui_end_callback(agent_name, result, time):
+                    st.toast(f"✅ {agent_name} completed in {time:.1f}s!", icon="✨")
+                    
+                orchestrator.runner.callbacks.register_callback("agent_start", ui_start_callback)
+                orchestrator.runner.callbacks.register_callback("agent_end", ui_end_callback)
+                
                 try:
                     with st.status("Running ADK Adaptation...", expanded=True) as status:
+                        progress_bar = st.progress(0)
                         st.write("🥫 Scanning pantry image...")
+                        
                         result_dict = asyncio.run(orchestrator.run_adaptation_workflow(temp_path, recipe))
                         result = result_dict["adaptation_result"]
                         
+                        progress_bar.progress(100)
                         st.session_state["adaptation_result"] = result
                         status.update(label="Adaptation Complete!", state="complete", expanded=False)
                         st.success("Recipe Successfully Adapted!")

@@ -27,11 +27,25 @@ if uploaded_file is not None:
         
         orchestrator = Snap2CookOrchestrator()
         
+        # UX: ADK Event Callbacks
+        def ui_start_callback(agent_name, payload):
+            st.toast(f"🤖 {agent_name} has started processing...", icon="⚙️")
+            
+        def ui_end_callback(agent_name, result, time):
+            st.toast(f"✅ {agent_name} completed in {time:.1f}s!", icon="✨")
+            
+        orchestrator.runner.callbacks.register_callback("agent_start", ui_start_callback)
+        orchestrator.runner.callbacks.register_callback("agent_end", ui_end_callback)
+        
         try:
             with st.status("Running ADK Orchestrator...", expanded=True) as status:
+                progress_bar = st.progress(0)
                 st.write("📷 Vision Agent analyzing image...")
+                
                 # We're running async inside sync Streamlit using asyncio.run
                 result = asyncio.run(orchestrator.run_full_workflow(temp_path))
+                
+                progress_bar.progress(100)
                 status.update(label="Analysis Complete!", state="complete", expanded=False)
             
             dish = result.get("dish_analysis")

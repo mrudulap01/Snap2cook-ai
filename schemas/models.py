@@ -7,6 +7,7 @@ class DetectedIngredient(BaseModel):
     category: Optional[str] = None # Vegetables, Fruits, Dairy, Spices, Condiments, Dry Goods, Frozen Items, Canned Items
 
 class DishAnalysis(BaseModel):
+    chain_of_thought: str = Field(description="Step-by-step reasoning for identifying the dish and estimating hidden ingredients")
     dish_name: str
     alternate_names: List[str]
     cuisine: Optional[str]
@@ -44,6 +45,7 @@ class RecipeStep(BaseModel):
     expected_outcome: str
 
 class Recipe(BaseModel):
+    chain_of_thought: str = Field(description="Step-by-step reasoning for reconstructing the recipe and calculating nutrition")
     dish_name: str
     cuisine: str
     description: str
@@ -70,6 +72,7 @@ class Substitution(BaseModel):
     reason: str
 
 class AdaptationResult(BaseModel):
+    chain_of_thought: str = Field(description="Step-by-step reasoning for ingredient substitutions and recipe adjustments")
     available_ingredients: List[str]
     missing_ingredients: List[Ingredient]
     substitutions: List[Substitution]
