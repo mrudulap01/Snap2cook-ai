@@ -60,7 +60,7 @@ class Settings:
         
     @property
     def MAX_TOKENS(self) -> int:
-        return int(os.getenv("MAX_TOKENS", "8000"))
+        return int(os.getenv("MAX_TOKENS", "2000"))
         
     @property
     def TOP_P(self) -> float:
