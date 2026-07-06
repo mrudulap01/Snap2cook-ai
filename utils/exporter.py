@@ -47,7 +47,15 @@ def generate_recipe_pdf(recipe) -> bytes:
             pdf.multi_cell(epw, 6, txt=sanitize(f"Duration: ~{step.duration_minutes}m | Outcome: {step.expected_outcome}"))
             pdf.ln(3)
             
-        return pdf.output(dest="S").encode("latin1", "replace")
+        out = pdf.output(dest="S")
+        if isinstance(out, str):
+            # PyFPDF (older) returns a latin-1 encoded string
+            return out.encode("latin1", "replace")
+        elif isinstance(out, bytearray):
+            # fpdf2 >= 2.8 returns a bytearray
+            return bytes(out)
+        else:
+            return bytes(out)
     except Exception as e:
         # Fallback if PDF generation completely fails, return a text file posing as a PDF so it doesn't crash the UI
         import logging
