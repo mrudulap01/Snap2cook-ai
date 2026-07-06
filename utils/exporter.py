@@ -11,40 +11,36 @@ def generate_recipe_pdf(recipe) -> bytes:
         pdf.add_page()
         pdf.set_auto_page_break(auto=True, margin=15)
         
-        # Calculate effective page width manually since older fpdf/fpdf2 might not have .epw
-        epw = pdf.w - pdf.l_margin - pdf.r_margin
-        
+        # Helper to forcefully reset X and render text
+        def render_text(text, font, style, size, h=6, align='L'):
+            pdf.set_font(font, style, size)
+            pdf.set_x(pdf.l_margin)
+            pdf.multi_cell(0, h, txt=sanitize(text), align=align)
+
         # Title
-        pdf.set_font("Helvetica", "B", 24)
-        pdf.multi_cell(epw, 10, txt=sanitize(recipe.dish_name), align='C')
+        render_text(recipe.dish_name, "Helvetica", "B", 24, h=10, align='C')
         pdf.ln(5)
         
         # Description
-        pdf.set_font("Helvetica", "I", 12)
-        pdf.multi_cell(epw, 8, txt=sanitize(recipe.description))
+        render_text(recipe.description, "Helvetica", "I", 12, h=8)
         pdf.ln(5)
         
         # Meta
-        pdf.set_font("Helvetica", "", 12)
-        pdf.multi_cell(epw, 8, txt=sanitize(f"Cuisine: {recipe.cuisine} | Servings: {recipe.servings} | Difficulty: {recipe.difficulty}"))
-        pdf.multi_cell(epw, 8, txt=sanitize(f"Prep Time: {recipe.prep_time}m | Cook Time: {recipe.cook_time}m | Total Time: {recipe.total_time}m"))
+        render_text(f"Cuisine: {recipe.cuisine} | Servings: {recipe.servings} | Difficulty: {recipe.difficulty}", "Helvetica", "", 12, h=8)
+        render_text(f"Prep Time: {recipe.prep_time}m | Cook Time: {recipe.cook_time}m | Total Time: {recipe.total_time}m", "Helvetica", "", 12, h=8)
         pdf.ln(5)
         
         # Ingredients
-        pdf.set_font("Helvetica", "B", 16)
-        pdf.multi_cell(epw, 10, txt="Ingredients")
-        pdf.set_font("Helvetica", "", 12)
+        render_text("Ingredients", "Helvetica", "B", 16, h=10)
         for ing in recipe.ingredients:
-            pdf.multi_cell(epw, 6, txt=sanitize(f"- {ing.name}: {ing.quantity} {ing.unit}"))
+            render_text(f"- {ing.name}: {ing.quantity} {ing.unit}", "Helvetica", "", 12, h=6)
         pdf.ln(5)
         
         # Instructions
-        pdf.set_font("Helvetica", "B", 16)
-        pdf.multi_cell(epw, 10, txt="Instructions")
-        pdf.set_font("Helvetica", "", 12)
+        render_text("Instructions", "Helvetica", "B", 16, h=10)
         for step in recipe.steps:
-            pdf.multi_cell(epw, 6, txt=sanitize(f"Step {step.step_number}: {step.instruction}"))
-            pdf.multi_cell(epw, 6, txt=sanitize(f"Duration: ~{step.duration_minutes}m | Outcome: {step.expected_outcome}"))
+            render_text(f"Step {step.step_number}: {step.instruction}", "Helvetica", "", 12, h=6)
+            render_text(f"Duration: ~{step.duration_minutes}m | Outcome: {step.expected_outcome}", "Helvetica", "", 12, h=6)
             pdf.ln(3)
             
         out = pdf.output(dest="S")
