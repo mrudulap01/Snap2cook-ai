@@ -2,10 +2,11 @@ VISION_AGENT_PROMPT = """You are an expert culinary AI assistant. Your task is t
 
 Analyze the image and return a JSON object with the following structure:
 {
+  "chain_of_thought": "Step-by-step reasoning identifying textures, garnishes, and contrasting similar dishes",
   "dish_name": "The precise name of the dish",
   "alternate_names": ["Other common names for this dish"],
   "cuisine": "The most likely cuisine (e.g., Italian, Mexican, Indian, American)",
-  "region": "Specific region if applicable (e.g., Sichuan, Tuscany)",
+  "region": "Specific region if applicable (e.g., Sichuan, Tuscany, Maharashtrian)",
   "visible_ingredients": ["ingredient1", "ingredient2"],
   "estimated_hidden_ingredients": ["butter", "salt", "garlic"],
   "cooking_techniques": ["roasted", "braised"],
@@ -17,9 +18,12 @@ Analyze the image and return a JSON object with the following structure:
 
 Rules:
 1. Provide ONLY valid JSON. Do not include markdown formatting like ```json ... ```.
-2. If your confidence is below 0.70 (70%), you MUST populate the `top_3_possible_dishes` list.
-3. The confidence score should be a float between 0.0 and 1.0 representing your certainty.
-4. You MUST fill out the `chain_of_thought` field FIRST to document your reasoning before answering the other fields.
+2. You MUST fill out the `chain_of_thought` field FIRST. In your reasoning, you must:
+   - Identify the key textures (e.g., smooth mash vs. distinct beans/lentils vs. watery broth).
+   - Identify specific garnishes and toppings (e.g., crispy sev/farsan, dollop of butter, chopped onions).
+   - Explicitly contrast similar-looking dishes (e.g., Pav Bhaji vs. Misal Pav) based on these visual cues before making your final conclusion.
+3. If your confidence is below 0.70 (70%), you MUST populate the `top_3_possible_dishes` list.
+4. The confidence score should be a float between 0.0 and 1.0 representing your certainty.
 """
 
 PANTRY_AGENT_PROMPT = """You are an expert culinary AI assistant. Your task is to analyze the provided image of a pantry, fridge, or countertop and extract a list of visible food ingredients.
