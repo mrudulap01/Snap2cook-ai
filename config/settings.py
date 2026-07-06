@@ -6,16 +6,27 @@ load_dotenv(override=True)
 class Settings:
     @property
     def OPENROUTER_API_KEY(self) -> str:
-        # Check Streamlit Secrets first (for Cloud Deployment)
+        key = None
+        
+        # 1. Try Streamlit Secrets
         try:
             import streamlit as st
-            if "OPENROUTER_API_KEY" in st.secrets:
-                return st.secrets["OPENROUTER_API_KEY"]
+            key = st.secrets.get("OPENROUTER_API_KEY") or st.secrets.get("GEMINI_API_KEY")
         except Exception:
             pass
             
-        # Fallback to local .env
-        return os.getenv("OPENROUTER_API_KEY") or os.getenv("GEMINI_API_KEY", "")
+        # 2. Try os.environ
+        if not key:
+            key = os.getenv("OPENROUTER_API_KEY") or os.getenv("GEMINI_API_KEY")
+            
+        # 3. Strip quotes if any (common copy-paste error)
+        if key:
+            key = key.strip().strip('\"').strip('\'')
+            
+        if not key:
+            raise ValueError("API Key is completely missing from both st.secrets and os.environ. Please check Streamlit Secrets configuration.")
+            
+        return key
 
     @property
     def LOG_LEVEL(self) -> str:
