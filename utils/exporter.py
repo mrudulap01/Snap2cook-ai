@@ -11,7 +11,8 @@ def generate_recipe_pdf(recipe) -> bytes:
         pdf.add_page()
         pdf.set_auto_page_break(auto=True, margin=15)
         
-        epw = pdf.epw  # Effective page width
+        # Calculate effective page width manually since older fpdf/fpdf2 might not have .epw
+        epw = pdf.w - pdf.l_margin - pdf.r_margin
         
         # Title
         pdf.set_font("Helvetica", "B", 24)
