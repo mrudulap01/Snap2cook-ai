@@ -127,6 +127,7 @@ Available Pantry Ingredients:
 
 You must return ONLY a JSON object matching exactly this structure:
 {
+  "chain_of_thought": "Step-by-step reasoning for ingredient substitutions and recipe adjustments",
   "available_ingredients": ["List of original ingredients they already have"],
   "missing_ingredients": [
       {
@@ -146,6 +147,7 @@ You must return ONLY a JSON object matching exactly this structure:
   "compatibility_score": 92,
   "compatibility_explanation": "Why the score is what it is (e.g. You have 90% of the core ingredients and the substitutions match the flavor profile perfectly.)",
   "adapted_recipe": {
+      "chain_of_thought": "Reasoning for the new adapted steps and nutrition calculation",
       "dish_name": "Adapted Dish Name",
       "cuisine": "Cuisine type",
       "description": "Description of the adapted version",
