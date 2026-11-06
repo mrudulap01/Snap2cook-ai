@@ -127,7 +127,9 @@ The orchestrator manages the execution sequence, maintains session context, and 
 
 ### Architecture Diagram
 
-![Snap2Cook AI System Architecture](docs/assets/snap2cook-architecture.png)
+## 🏗️ System Architecture
+
+![Snap2Cook AI Architecture](docs/assets/snap2cook-architecture.png)
 
 ### Architecture Components
 
