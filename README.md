@@ -1,192 +1,424 @@
-<div align="center">
-  <!-- Banner Placeholder -->
-  <img src="https://via.placeholder.com/1200x300.png?text=Snap2Cook+AI+Banner" alt="Snap2Cook AI Banner">
-  
-  <!-- Logo Placeholder -->
-  <img src="https://via.placeholder.com/150x150.png?text=Logo" alt="Snap2Cook Logo" width="150" height="150">
-  
-  # Snap2Cook AI 🍳📸
-  
-  **Snap Any Dish. Cook It With What You Already Have.**
-  
-  <p align="center">
-    <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.9+-blue.svg?logo=python&logoColor=white" alt="Python"></a>
-    <a href="https://developers.google.com/workspace/agents"><img src="https://img.shields.io/badge/Google-ADK-orange.svg?logo=google&logoColor=white" alt="Google ADK"></a>
-    <a href="https://deepmind.google/technologies/gemini/"><img src="https://img.shields.io/badge/AI-Gemini_2.5_Flash-00A9E0.svg?logo=googlebard&logoColor=white" alt="Gemini"></a>
-    <a href="https://streamlit.io/"><img src="https://img.shields.io/badge/Streamlit-UI-FF4B4B.svg?logo=streamlit&logoColor=white" alt="Streamlit"></a>
-    <a href="https://modelcontextprotocol.io/"><img src="https://img.shields.io/badge/Architecture-MCP-4CAF50.svg" alt="MCP"></a>
-    <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/Open%20Source-%E2%9D%A4-green.svg" alt="Open Source"></a>
-  </p>
-</div>
+# 🍳 Snap2Cook AI
+### Snap Any Dish. Recreate It. Adapt It. Cook It.
+
+**An AI-powered Multi-Agent Culinary Assistant for Recipe Reconstruction and Smart Pantry-Based Adaptation.**
+
+Snap2Cook AI transforms the way people discover and prepare food. By combining computer vision, Large Language Models (LLMs), multi-agent orchestration, and deterministic tools, it turns a picture of a cooked dish into a structured recipe and intelligently adapts that recipe using ingredients available in your pantry.
+
+Instead of simply identifying food, Snap2Cook AI attempts to answer two practical questions:
+
+- How can I recreate this dish?
+- Can I make it with the ingredients I already have?
 
 ---
 
-## 📖 Project Overview
-Snap2Cook AI is an intelligent, multi-agent culinary assistant designed to bridge the gap between food discovery and home cooking. By leveraging state-of-the-art vision models and the **Google Agent Development Kit (ADK)**, Snap2Cook reverse-engineers a complete, cookbook-quality recipe from a single photo of a cooked dish. It then intelligently adapts that recipe based on a visual scan of your pantry, ensuring you can cook delicious meals without unnecessary grocery runs.
+## 📌 Table of Contents
+
+- [Overview](#-overview)
+- [Problem Statement](#-problem-statement)
+- [Our Solution](#-our-solution)
+- [Key Features](#-key-features)
+- [System Architecture](#-system-architecture)
+- [Multi-Agent Workflow](#-multi-agent-workflow)
+- [MCP Tools](#-model-context-protocol-mcp-tools)
+- [Technology Stack](#-technology-stack)
+- [Project Structure](#-project-structure)
+- [Installation and Setup](#-installation-and-setup)
+- [Running the Application](#-running-the-application)
+- [Testing](#-testing)
+- [Future Scope](#-future-scope)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+---
+
+## 📖 Overview
+
+Snap2Cook AI is an intelligent, vision-driven cooking assistant that reconstructs recipes from food images and adapts them according to the ingredients available at home.
+
+The application follows a structured multi-agent architecture orchestrated using Google Agent Development Kit (ADK)-based workflow patterns.
+
+Users provide two inputs:
+
+1. **Dish Image:** An image of a prepared dish that needs to be recreated.
+2. **Pantry Image:** An image of available ingredients in the kitchen.
+
+The system processes these inputs through specialized AI agents, reconstructs the original recipe, analyzes pantry availability, and generates an adapted recipe with ingredient substitutions and actionable cooking information.
+
+The goal is to make cooking more accessible, reduce unnecessary grocery purchases, and help users make better use of available ingredients.
+
+---
 
 ## ❗ Problem Statement
-Food discovery often happens visually—through social media, menus, or cookbooks. However, translating a photo into a cookable recipe is difficult. Even when a recipe is found, home cooks frequently face the "missing ingredient" dilemma, leading to abandoned cooking plans or last-minute shopping trips.
 
-## 💡 Solution
-Snap2Cook AI eliminates culinary friction by providing an end-to-end, vision-driven cooking pipeline:
-1. **Discover:** Snap a photo of a dish to generate an authentic recipe.
-2. **Adapt:** Snap a photo of your fridge/pantry to dynamically rewrite the recipe using only what you have on hand.
+People frequently discover interesting dishes through social media, restaurants, food blogs, and photographs.
 
----
+However, recreating these dishes at home presents several challenges:
 
-## ✨ Features
-- **👁️ AI Dish Recognition**: Accurately detects cuisine, distinct textures, and hidden ingredients from a single image.
-- **👨‍🍳 Recipe Reconstruction**: Generates granular, step-by-step cooking instructions complete with estimated times and expected outcomes.
-- **🥫 Pantry Analysis**: Identifies available ingredients from chaotic fridge or pantry photos.
-- **🔀 Smart Ingredient Substitution**: Dynamically rewrites recipes, swapping out missing items with culinary-appropriate alternatives from your inventory.
-- **📊 Deterministic Nutrition Analysis**: Calculates macros per serving using a strict, algorithmic Model Context Protocol (MCP) server integration.
+- A food photograph does not provide the actual recipe.
+- Identifying hidden ingredients and their quantities is difficult.
+- Finding suitable substitutes for unavailable ingredients can be confusing.
+- Existing ingredients at home are often overlooked.
+- Nutritional information and cooking measurements may require additional research.
+
+**Snap2Cook AI addresses these challenges by connecting visual food recognition with intelligent recipe reconstruction and pantry-aware adaptation.**
 
 ---
 
-## 🛠️ Tech Stack
-- **Language**: Python 3.9+
-- **Agent Framework**: Google Agent Development Kit (ADK) Architectures
-- **Intelligence**: OpenRouter / Google Gemini 2.5 Flash / Meta Llama 3.1
-- **UI/UX**: Streamlit
-- **Validation**: Pydantic Strict Typing
-- **Resiliency**: Tenacity (Exponential Backoff Retries)
+## 💡 Our Solution
+
+Snap2Cook AI provides an end-to-end AI-powered cooking workflow.
+
+| Stage | Functionality |
+|---|---|
+| 1. Upload | Upload a photograph of the desired dish. |
+| 2. Analyze | Identify the dish, cuisine, visible ingredients, and cooking techniques. |
+| 3. Reconstruct | Generate ingredients, estimated quantities, and step-by-step instructions. |
+| 4. Analyze Pantry | Identify available ingredients from the pantry image. |
+| 5. Adapt | Compare ingredients and suggest intelligent substitutions. |
+| 6. Generate Output | Produce an adapted recipe, nutrition information, shopping list, and compatibility score. |
 
 ---
 
-## 🏗️ Architecture
+## ✨ Key Features
 
-### 1. Google ADK Workflow
-Snap2Cook avoids the unreliability of autonomous "agent swarms" by implementing a strict, centralized orchestration pattern inspired by the **Google ADK**.
-- **ADKRunner**: A centralized state machine that routes data sequentially.
-- **ADKSession**: Provides immutable telemetry and logs every agent interaction.
-- **Event Callbacks**: Hooks into Streamlit to provide real-time UI updates (`on_agent_start`, `on_agent_end`).
-- **Chain of Thought (CoT)**: Enforced via Pydantic; agents must "think out loud" before finalizing their JSON outputs.
+### 👁️ 1. AI-Powered Vision Analysis
+- Identifies the dish from an uploaded image.
+- Detects cuisine type and visible ingredients.
+- Extracts visual cooking characteristics and techniques.
 
-<!-- Architecture Diagram Placeholder -->
-<div align="center">
-  <img src="https://via.placeholder.com/800x400.png?text=System+Architecture+Diagram" alt="Architecture Diagram">
-</div>
+### 👨‍🍳 2. Recipe Reconstruction
+- Reconstructs a structured recipe from a dish photograph.
+- Generates ingredient lists and estimated quantities.
+- Provides step-by-step cooking instructions.
+- Estimates preparation time, cooking time, and servings.
+- Generates nutritional information and chef recommendations.
 
-### 2. Model Context Protocol (MCP) Workflow
-To ensure accuracy, the application decouples non-linguistic tasks from the LLM. Using a simulated **MCP Server**, the AI requests rigid, deterministic calculations:
-- `get_nutrition()`: Algorithmic macronutrient calculation based on ingredient categories.
-- `scale_recipe()`: Strict mathematical unit conversions and yield scaling.
+### 🥫 3. Intelligent Pantry Inventory
+- Analyzes uploaded pantry photographs.
+- Detects available ingredients.
+- Normalizes ingredient names.
+- Estimates quantities where visually possible.
+- Converts the detected ingredients into structured pantry data.
+
+### 🔄 4. Smart Recipe Adaptation
+- Compares reconstructed recipes with available pantry ingredients.
+- Identifies missing and available ingredients.
+- Suggests suitable ingredient substitutions.
+- Adapts recipes according to pantry availability.
+- Generates a shopping list for missing ingredients.
+- Calculates a recipe compatibility score.
+
+### 📊 5. Nutrition Analysis
+- Provides nutritional information for ingredients and recipes.
+- Calculates nutritional values per serving using dedicated tools.
+
+### ⚖️ 6. Measurement Conversion and Scaling
+- Converts ingredient measurements.
+- Scales ingredient quantities based on the required servings.
 
 ---
 
-## 📁 Folder Structure
+## 🏗️ System Architecture
+
+Snap2Cook AI uses a centralized multi-agent workflow instead of relying on independent, uncoordinated AI agents.
+
+The orchestrator manages the execution sequence, maintains session context, and coordinates interactions between specialized agents and external tools.
+
+### Architecture Diagram
+
+![Snap2Cook AI System Architecture](docs/assets/snap2cook-architecture.png)
+
+### Architecture Components
+
+| Component | Responsibility |
+|---|---|
+| User Interface | Accepts dish and pantry image uploads. |
+| ADK-Based Orchestrator | Coordinates agents and manages workflow execution. |
+| Vision Analysis Agent | Analyzes dish images and extracts visual information. |
+| Recipe Reconstruction Agent | Generates structured recipes and cooking instructions. |
+| Pantry Inventory Agent | Detects and structures available ingredients. |
+| Recipe Adaptation Agent | Adapts recipes using available ingredients and substitutions. |
+| MCP Tool Server | Provides dedicated tools for nutrition, substitutions, and conversions. |
+| Session Management | Maintains workflow context and execution state. |
+| Pydantic Models | Enforces structured data validation. |
+
+---
+
+## 🤖 Multi-Agent Workflow
+
+The system consists of four specialized agents working sequentially.
+
+### 1. Vision Analysis Agent
+**Input:** Dish photograph.
+
+Responsibilities:
+- Identify the dish name.
+- Detect cuisine type.
+- Extract visible ingredients.
+- Identify cooking techniques and visual characteristics.
+
+**Output:** Structured dish analysis.
+
+### 2. Recipe Reconstruction Agent
+**Input:** Vision analysis results.
+
+Responsibilities:
+- Reconstruct ingredients and estimated quantities.
+- Generate step-by-step cooking instructions.
+- Estimate preparation and cooking time.
+- Estimate servings.
+- Generate nutrition information.
+- Provide cooking tips and suggestions.
+
+**Output:** Structured reconstructed recipe.
+
+### 3. Pantry Inventory Agent
+**Input:** Pantry photograph.
+
+Responsibilities:
+- Detect available ingredients.
+- Normalize ingredient names.
+- Estimate quantities when possible.
+- Generate structured pantry information.
+
+**Output:** Structured pantry inventory.
+
+### 4. Recipe Adaptation Agent
+**Input:** Reconstructed recipe and pantry inventory.
+
+Responsibilities:
+- Compare required ingredients with available ingredients.
+- Identify missing ingredients.
+- Find suitable alternatives.
+- Adapt the recipe.
+- Generate a shopping list.
+- Calculate a compatibility score.
+
+**Output:** Pantry-adapted recipe and actionable cooking information.
+
+---
+
+## 🔌 Model Context Protocol (MCP) Tools
+
+Snap2Cook AI separates deterministic operations from LLM-based reasoning through dedicated MCP-style tool integrations.
+
+This helps keep mathematical calculations and structured operations separate from generative AI responses.
+
+### Implemented Tool Categories
+
+| Tool | Purpose |
+|---|---|
+| Nutrition Tool | Calculates nutritional information for ingredients and recipes. |
+| Substitution Tool | Suggests suitable alternatives for unavailable ingredients. |
+| Conversion / Scaling Tool | Converts measurements and scales ingredient quantities based on servings. |
+
+The tools are coordinated through the recipe adaptation workflow to provide structured and actionable results.
+
+---
+
+## 🛠️ Technology Stack
+
+| Category | Technologies |
+|---|---|
+| Programming Language | Python 3.9+ |
+| Agent Orchestration | Google Agent Development Kit (ADK)-based workflow |
+| AI Models | Google Gemini 2.5 Flash, Meta Llama 3.1 |
+| Model Access | OpenRouter / Gemini API |
+| User Interface | Streamlit |
+| Data Validation | Pydantic |
+| Tool Integration | Model Context Protocol (MCP)-style tool server |
+| Reliability | Tenacity |
+| Testing | Pytest |
+| Version Control | Git and GitHub |
+
+---
+
+## 📂 Project Structure
 
 ```text
-📦 snap2cook-ai
- ┣ 📂 agents/                # Core AI Agents (Vision, Pantry, Recipe, Adaptation)
- ┃ ┣ 📜 base_agent.py        # Abstract agent class
- ┃ ┣ 📜 callbacks.py         # ADK Event listeners for UI telemetry
- ┃ ┣ 📜 orchestrator.py      # Central state manager (ADK Runner)
- ┃ ┣ 📜 prompts.py           # Chain-of-Thought injected prompts
- ┃ ┗ 📜 sessions.py          # ADK Session logging
- ┣ 📂 config/                # Environment and app settings
- ┣ 📂 frontend/              # Streamlit User Interface
- ┃ ┣ 📜 app.py               # Home Landing Page
- ┃ ┗ 📂 pages/               # Upload Dish & My Pantry interfaces
- ┣ 📂 mcp_server/            # Simulated Model Context Protocol Server
- ┃ ┣ 📜 server.py            # MCP tool registry
- ┃ ┗ 📂 tools/               # Deterministic nutrition and conversion tools
- ┣ 📂 schemas/               # Strict Pydantic Data Models
- ┣ 📂 tests/                 # Pytest verification suites
- ┣ 📂 utils/                 # Resiliency wrappers and exporters
- ┣ 📜 requirements.txt       # Project dependencies
- ┗ 📜 README.md              # Project documentation
+Snap2cook-ai/
+│
+├── agents/
+│   ├── base_agent.py
+│   ├── callbacks.py
+│   ├── orchestrator.py
+│   ├── prompts.py
+│   └── sessions.py
+│
+├── config/
+│   └── Application configuration
+│
+├── docs/
+│   └── assets/
+│       └── snap2cook-architecture.png
+│
+├── frontend/
+│   ├── app.py
+│   └── pages/
+│
+├── mcp_server/
+│   ├── server.py
+│   └── tools/
+│
+├── schemas/
+│
+├── tests/
+│
+├── utils/
+│
+├── .env.example
+├── requirements.txt
+├── test_pantry.py
+├── test_pantry_err.py
+├── test_workflow.py
+└── README.md
 ```
 
 ---
 
-## 📸 Screenshots
+## ⚙️ Installation and Setup
 
-<div align="center">
-  <!-- Screenshot 1 Placeholder -->
-  <img src="https://via.placeholder.com/800x450.png?text=Home+Page+Showcase" alt="Home Page">
-  <br><br>
-  <!-- Screenshot 2 Placeholder -->
-  <img src="https://via.placeholder.com/800x450.png?text=Upload+Dish+Workflow" alt="Upload Dish">
-  <br><br>
-  <!-- Screenshot 3 Placeholder -->
-  <img src="https://via.placeholder.com/800x450.png?text=Smart+Pantry+Adaptation" alt="My Pantry">
-</div>
+### Prerequisites
 
----
+- Python 3.9 or higher.
+- Git.
+- An API key for a supported AI provider.
 
-## ⚙️ Installation & Running Locally
+### Step 1: Clone the Repository
 
-### 1. Prerequisites
-- **Python 3.9+**
-- Git installed on your system
-
-### 2. Clone the Repository
 ```bash
 git clone https://github.com/mrudulap01/Snap2cook-ai.git
+
 cd Snap2cook-ai
 ```
 
-### 3. Install Dependencies
+### Step 2: Create a Virtual Environment
+
+```bash
+python -m venv venv
+```
+
+Activate the environment:
+
+**Windows:**
+
+```bash
+venv\Scripts\activate
+```
+
+**Linux / macOS:**
+
+```bash
+source venv/bin/activate
+```
+
+### Step 3: Install Dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Environment Variables
-Create a `.env` file in the root directory. The application is completely provider-independent.
+### Step 4: Configure Environment Variables
+
+Create a `.env` file in the root directory.
 
 ```env
-# Primary API Key
-AI_API_KEY=your_openrouter_or_gemini_key_here
+AI_API_KEY=your_api_key_here
 
-# Base URL (Default: OpenRouter)
 AI_BASE_URL=https://openrouter.ai/api/v1
 
-# Model Selection
 VISION_MODEL=google/gemini-2.5-flash
+
 TEXT_MODEL=google/gemini-2.5-flash
+
 FALLBACK_TEXT_MODEL=meta-llama/llama-3.1-70b-instruct
 ```
 
-### 5. Start the Application
+Configure the appropriate API key and model settings for your chosen provider.
+
+**Important:** Never commit your actual API keys or `.env` file to GitHub.
+
+---
+
+## ▶️ Running the Application
+
+Start the Streamlit application:
+
 ```bash
 python -m streamlit run frontend/app.py
 ```
-The app will launch in your browser at `http://localhost:8501`.
+
+Open the application in your browser:
+
+```text
+http://localhost:8501
+```
+
+Upload a dish image and a pantry image to explore the recipe reconstruction and adaptation workflow.
 
 ---
 
-## ☁️ Deployment (Streamlit Community Cloud)
-Snap2Cook is production-ready for immediate deployment.
-1. Sign in to [Streamlit Community Cloud](https://share.streamlit.io/).
-2. Create a **New App** and select your GitHub repository.
-3. Set the **Main file path** to `frontend/app.py`.
-4. In **Advanced Settings**, add your environment variables as Streamlit Secrets:
-   ```toml
-   AI_API_KEY = "..."
-   VISION_MODEL = "google/gemini-2.5-flash"
-   TEXT_MODEL = "google/gemini-2.5-flash"
-   ```
-5. Click **Deploy!**
+## 🧪 Testing
+
+Run the test suite using:
+
+```bash
+pytest
+```
+
+To run individual test files:
+
+```bash
+pytest test_pantry.py
+pytest test_pantry_err.py
+pytest test_workflow.py
+```
 
 ---
 
-## 🚀 Future Scope
-- **Multi-Modal Output**: Generate AI audio guides that read the recipe steps aloud while cooking.
-- **Grocery Integration**: 1-click integration with Instacart or Amazon Fresh for the missing items shopping list.
-- **Dietary Restrictions**: Strict toggle modes for Vegan, Keto, or Gluten-Free adaptations.
+## 🔮 Future Scope
+
+Some potential enhancements include:
+
+- **Dietary Personalization:** Adapt recipes according to dietary preferences and restrictions.
+- **Voice-Assisted Cooking:** Provide hands-free, step-by-step cooking guidance.
+- **Advanced Food Recognition:** Improve ingredient detection and quantity estimation.
+- **Smart Grocery Integration:** Integrate shopping services for missing ingredients.
+- **Recipe History:** Save and revisit previously generated recipes.
+- **Allergy-Aware Adaptation:** Provide ingredient recommendations while accounting for declared allergies.
+- **Improved Nutrition Estimation:** Incorporate more comprehensive ingredient-level nutritional databases.
 
 ---
 
 ## 🤝 Contributing
-Contributions are always welcome! 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+
+Contributions and suggestions are welcome!
+
+1. Fork this repository.
+2. Create a feature branch.
+3. Commit your changes.
+4. Push the branch.
+5. Open a Pull Request.
 
 ---
 
 ## 📄 License
-Distributed under the MIT License. See `LICENSE` for more information.
+
+This project is distributed under the MIT License. See the `LICENSE` file for details.
+
+---
+
+## 👩‍💻 Author
+
+**Mrudula Pimparwar**
+
+GitHub: [@mrudulap01](https://github.com/mrudulap01)
+
+Project Repository: [Snap2Cook AI](https://github.com/mrudulap01/Snap2cook-ai)
+
+---
+
+⭐ If you find this project interesting, consider giving the repository a star!
+
+**Snap2Cook AI — From a Picture to a Possibility.** 🍳
